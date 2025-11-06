@@ -14,7 +14,7 @@ app.use("/health", (req, res) => {
   res.status(200).json({ message: "Server is up and running!" });
 });
 
-app.use("/user", authRouter);
+app.use("/auth", authRouter);
 
 connectDb().then(() => {
   console.log("MongoDB connected");
