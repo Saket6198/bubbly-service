@@ -1,7 +1,7 @@
 {
   "name": "bubbly-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "backend service for my native chat application",
   "main": "index.ts",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only index.ts --turbo"
