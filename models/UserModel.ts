@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { UserProps } from '../types';
+import { UserProps } from "../types";
 
 const UserSchema = new mongoose.Schema<UserProps>(
   {
@@ -22,10 +22,6 @@ const UserSchema = new mongoose.Schema<UserProps>(
     avatar: {
       type: String,
       default: "",
-    },
-    created: {
-      type: Date,
-      default: Date.now,
     },
   },
   {
