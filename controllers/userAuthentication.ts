@@ -12,7 +12,7 @@ export const register = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const findUser = await UserModel.findOne({ email });
     if (findUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(409).json({ message: "User already exists" });
     }
 
     const hashedPassword = await argon2.hash(password);
@@ -44,11 +44,11 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = await UserModel.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
     const isPasswordValid = await argon2.verify(user?.password, password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
     const token = jwt.sign(
       { id: user._id, email: user.email, avatar: user.avatar, name: user.name },
