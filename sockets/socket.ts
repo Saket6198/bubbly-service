@@ -5,6 +5,11 @@ import { registerUserEvents } from "./userEvents";
 dotenv.config({ path: ".env.local" });
 
 export const initializeSocket = (server: any): ServerIOSocket => {
+  const JWT_SECRET = process.env.JWT_SECRET;
+  if (!JWT_SECRET) {
+    console.log("JWT_SECRET not defined", JWT_SECRET);
+    throw new Error("JWT_SECRET is not defined in environment variables");
+  }
   // upgrade http server to socket server
   const io = new ServerIOSocket(server, {
     cors: {
@@ -20,16 +25,19 @@ export const initializeSocket = (server: any): ServerIOSocket => {
       throw new Error("Authentication error: Token not provided");
     }
 
-    jwt.verify(token, process.env.JWT_SECRET as string, (err: any, decoded: any) => {
-      if (err) {
-        throw new Error("Authentication error: Invalid token");
-      }
-      const userData = {
-        id: decoded.id,
-        email: decoded.email,
-        name: decoded.name,
-        avatar: decoded.avatar,
-      };
+    jwt.verify(
+      token,
+      process.env.JWT_SECRET as string,
+      (err: any, decoded: any) => {
+        if (err) {
+          throw new Error("Authentication error: Invalid token");
+        }
+        const userData = {
+          id: decoded.id,
+          email: decoded.email,
+          name: decoded.name,
+          avatar: decoded.avatar,
+        };
 
         // attach user data to socket object
         socket.data = userData;
@@ -42,22 +50,21 @@ export const initializeSocket = (server: any): ServerIOSocket => {
   // when socket connects, register events
 
   io.on("connection", async (socket: Socket) => {
-    console.log(`User connected: ${socket.data.userId}, username: ${socket.data.name}`);
+    console.log(
+      `User connected: ${socket.data.userId}, username: ${socket.data.name}`
+    );
 
-
-      //register events
+    //register events
 
     registerUserEvents(io, socket);
 
-      socket.on("disconnect", () => {
-        //user logs out
-        console.log(`User disconnected: ${socket.data.userId}, username: ${socket.data.name}`);
-      })
+    socket.on("disconnect", () => {
+      //user logs out
+      console.log(
+        `User disconnected: ${socket.data.userId}, username: ${socket.data.name}`
+      );
+    });
   });
-
-
-    
-
 
   return io;
 };
